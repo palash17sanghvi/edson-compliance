@@ -31,3 +31,17 @@ CREATE TABLE Bookings (
     end_time TIME NOT NULL,
     status VARCHAR(50) DEFAULT 'Pending' CHECK (status IN ('Pending', 'Approved', 'Rejected', 'Completed'))
 );
+
+
+ALTER TABLE Bookings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE Bookings FORCE ROW LEVEL SECURITY;
+
+CREATE POLICY rbac_location_access ON Bookings
+FOR SELECT
+USING (
+    EXISTS (
+        SELECT 1 FROM User_Profiles 
+        WHERE user_id = current_setting('app.current_user_id', true)::INT
+        AND (assigned_location_id = Bookings.location_id OR assigned_location_id IS NULL)
+    )
+);
