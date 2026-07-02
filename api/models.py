@@ -79,16 +79,21 @@ class AuthUserUserPermissions(models.Model):
 
 class Bookings(models.Model):
     booking_id = models.AutoField(primary_key=True)
-    location = models.ForeignKey('Locations', models.DO_NOTHING)
-    organizer = models.ForeignKey('EventOrganizers', models.DO_NOTHING)
-    approved_by = models.ForeignKey('UserProfiles', models.DO_NOTHING, db_column='approved_by', blank=True, null=True)
+    location = models.ForeignKey(
+        'Locations', models.DO_NOTHING, blank=True, null=True)
+    organizer = models.ForeignKey(
+        'EventOrganizers', models.DO_NOTHING, blank=True, null=True)
+    approved_by = models.ForeignKey(
+        'UserProfiles', models.DO_NOTHING, db_column='approved_by', blank=True, null=True)
     event_date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
-    status = models.CharField(max_length=50, blank=True, null=True)
+    status = models.CharField(max_length=20, blank=True, null=True)
+    compliance_document = models.FileField(
+        upload_to='compliance/', null=True, blank=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'bookings'
 
 
@@ -98,7 +103,8 @@ class DjangoAdminLog(models.Model):
     object_repr = models.CharField(max_length=200)
     action_flag = models.SmallIntegerField()
     change_message = models.TextField()
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
+    content_type = models.ForeignKey(
+        'DjangoContentType', models.DO_NOTHING, blank=True, null=True)
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
 
     class Meta:
@@ -163,7 +169,8 @@ class UserProfiles(models.Model):
     full_name = models.CharField(max_length=150)
     email = models.CharField(unique=True, max_length=150)
     role = models.CharField(max_length=50)
-    assigned_location = models.ForeignKey(Locations, models.DO_NOTHING, blank=True, null=True)
+    assigned_location = models.ForeignKey(
+        Locations, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
